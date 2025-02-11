@@ -8,7 +8,6 @@ import '../widgets/editor.dart';
 
 class JsonEditorPage extends StatelessWidget {
   static const String route = '/json_editor';
-
   final JsonEditorController _controller = Get.find();
 
   @override
@@ -42,24 +41,34 @@ class JsonEditorPage extends StatelessWidget {
         
         return Column(
           children: [
-            JsonBreadcrumbs(path: [_controller.selectedPath]),
+            JsonBreadcrumbs(
+              path: _controller.currentPath,
+              onPathSelected: _controller.setSelectedPath,
+            ),
             Expanded(
               child: Row(
                 children: [
                   Expanded(
                     flex: 2,
-                    child: JsonTreeView(
-                      node: _controller.currentNode!,
-                      onNodeSelected: (path) => _controller.setSelectedPath(path),
+                    child: Card(
+                      margin: const EdgeInsets.all(8),
+                      child: JsonTreeView(
+                        node: _controller.currentNode!,
+                        selectedPath: _controller.selectedPath,
+                        onNodeSelected: _controller.setSelectedPath,
+                        onNodeMoved: _controller.moveNode,
+                      ),
                     ),
                   ),
-                  const VerticalDivider(),
                   Expanded(
                     flex: 1,
-                    child: JsonNodeEditor(
-                      node: _controller.currentNode!,
-                      selectedPath: _controller.selectedPath,
-                      onEdit: _controller.editNode,
+                    child: Card(
+                      margin: const EdgeInsets.all(8),
+                      child: JsonNodeEditor(
+                        node: _controller.selectedNode!,
+                        onEdit: _controller.editNode,
+                        selectedPath: _controller.selectedPath,
+                      ),
                     ),
                   ),
                 ],
@@ -76,7 +85,7 @@ class JsonEditorPage extends StatelessWidget {
   }
 
   void _showAddNodeDialog(BuildContext context) {
-    _controller.loadJson("");
+    _controller.loadJson("type");
     // Implementation for add node dialog
   }
 }
